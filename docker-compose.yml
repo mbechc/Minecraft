@@ -1,0 +1,97 @@
+networks:
+  minecraft-server-network:
+    driver: bridge
+
+services:
+  minecraft-server:
+    image: ${MINECRAFT_SERVER_IMAGE_TAG}
+    volumes:
+      - ./minecraft-server-data:${DATA_PATH}
+      - ./plugins:/plugins:ro
+    environment:
+      OVERRIDE_SERVER_PROPERTIES: "true"
+      EULA: ${MINECRAFT_SERVER_EULA}
+      TYPE: ${MINECRAFT_SERVER_TYPE}
+      VERSION: ${MINECRAFT_SERVER_VERSION}
+      MEMORY: ${MINECRAFT_SERVER_MEMORY}
+      SERVER_NAME: ${MINECRAFT_SERVER_SERVER_NAME}
+      MOTD: ${MINECRAFT_SERVER_MOTD}
+      LEVEL_TYPE: ${MINECRAFT_SERVER_LEVEL_TYPE}
+      LEVEL: ${MINECRAFT_SERVER_LEVEL}
+      MODE: ${MINECRAFT_SERVER_MODE}
+      FORCE_GAMEMODE: ${MINECRAFT_SERVER_FORCE_GAMEMODE}
+      DIFFICULTY: ${MINECRAFT_SERVER_DIFFICULTY}
+      HARDCORE: ${MINECRAFT_SERVER_HARDCORE}
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: ${MINECRAFT_SERVER_ANNOUNCE_PLAYER_ACHIEVEMENTS}
+      MAX_PLAYERS: ${MINECRAFT_SERVER_MAX_PLAYERS}
+      PVP: ${MINECRAFT_SERVER_PVP}
+      ENABLE_RCON: ${MINECRAFT_SERVER_ENABLE_RCON}
+      RCON_PASSWORD: ${MINECRAFT_SERVER_RCON_PASSWORD}
+      RCON_PORT: ${MINECRAFT_SERVER_RCON_PORT}
+      SERVER_PORT: ${MINECRAFT_SERVER_SERVER_PORT}
+      ALLOW_FLIGHT: ${MINECRAFT_SERVER_ALLOW_FLIGHT}
+      MAX_WORLD_SIZE: ${MINECRAFT_SERVER_MAX_WORLD_SIZE}
+      MAX_BUILD_HEIGHT: ${MINECRAFT_SERVER_MAX_BUILD_HEIGHT}
+      SPAWN_ANIMALS: ${MINECRAFT_SERVER_SPAWN_ANIMALS}
+      SPAWN_MONSTERS: ${MINECRAFT_SERVER_SPAWN_MONSTERS}
+      SPAWN_NPCS: ${MINECRAFT_SERVER_SPAWN_NPCS}
+      SPAWN_PROTECTION: ${MINECRAFT_SERVER_SPAWN_PROTECTION}
+      VIEW_DISTANCE: ${MINECRAFT_SERVER_VIEW_DISTANCE}
+      ONLINE_MODE: ${MINECRAFT_SERVER_ONLINE_MODE}
+      SNOOPER_ENABLED: ${MINECRAFT_SERVER_SNOOPER_ENABLED}
+      ENABLE_COMMAND_BLOCK: ${MINECRAFT_SERVER_ENABLE_COMMAND_BLOCK}
+      WHITELIST: ${MINECRAFT_SERVER_WHITELIST}
+      OPS: ${MINECRAFT_SERVER_OPS}
+      TZ: ${MINECRAFT_SERVER_SERVER_TIMEZONE}
+      NODE_RED_WEBHOOK_URL: "http://192.168.88.5:1880/minecraft"
+      MODRINTH_PROJECTS: "viaversion,viabackwards"
+      MODRINTH_ALLOWED_VERSION_TYPES: "release"
+    networks:
+      - minecraft-server-network
+    ports:
+      - "${MINECRAFT_SERVER_SERVER_PORT}:${MINECRAFT_SERVER_SERVER_PORT}"
+    healthcheck:
+      test: ["CMD-SHELL", "mc-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 8
+      start_period: 5m
+    restart: unless-stopped
+
+  geyser:
+    image: eclipse-temurin:21-jre-alpine
+    working_dir: /app
+    volumes:
+      - ./geyser:/app
+    command: ["sh", "/app/start.sh"]
+    ports:
+      - "19132:19132/udp"
+    networks:
+      - minecraft-server-network
+    restart: unless-stopped
+    depends_on:
+      minecraft-server:
+        condition: service_healthy
+
+  backups:
+    image: ${MINECRAFT_SERVER_BACKUP_IMAGE_TAG}
+    environment:
+      RCON_HOST: minecraft-server
+      RCON_PORT: ${MINECRAFT_SERVER_RCON_PORT}
+      RCON_PASSWORD: ${MINECRAFT_SERVER_RCON_PASSWORD}
+      SERVER_PORT: ${MINECRAFT_SERVER_SERVER_PORT}
+      SRC_DIR: ${DATA_PATH}
+      BACKUP_METHOD: ${BACKUP_METHOD}
+      BACKUP_INTERVAL: ${MINECRAFT_SERVER_BACKUP_INTERVAL}
+      PRUNE_BACKUPS_DAYS: ${MINECRAFT_SERVER_PRUNE_BACKUPS_DAYS}
+      INITIAL_DELAY: ${MINECRAFT_SERVER_INITIAL_DELAY}
+      TZ: ${MINECRAFT_SERVER_SERVER_TIMEZONE}
+    volumes:
+      - ./minecraft-server-data:${DATA_PATH}:ro
+      - ./minecraft-server-data-backups:${MINECRAFT_SERVER_BACKUPS_PATH}
+    networks:
+      - minecraft-server-network
+    restart: unless-stopped
+    depends_on:
+      minecraft-server:
+        condition: service_healthy

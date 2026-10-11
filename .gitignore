@@ -1,0 +1,19 @@
+# First start downloads the server, plugins, and Geyser, and creates a new world.
+minecraft-server-data/minecraft-world-*/
+minecraft-server-data/logs/
+minecraft-server-data/libraries/
+minecraft-server-data/versions/
+minecraft-server-data/cache/
+minecraft-server-data/.cache/
+minecraft-server-data/.paper/
+minecraft-server-data/*.jar
+minecraft-server-data/plugins/*.jar
+minecraft-server-data/plugins/.paper-remapped/
+minecraft-server-data/crash-reports/
+minecraft-server-data/usercache.json
+geyser/Geyser.jar
+geyser/cache/
+geyser/logs/
+geyser/locales/
+minecraft-server-data-backups/*
+!minecraft-server-data-backups/.keep
