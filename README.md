@@ -2,6 +2,8 @@
 
 ## Start the server
 
+Getting the server up takes one Compose command. Docker, with the Compose plugin, must already be installed. TCP port 25565 and UDP port 19132 must be free. The first start needs internet access so Compose can pull the images and download Paper, ViaVersion, ViaBackwards, and Geyser. No other setup is required: `.env` is already in the repo.
+
 On the Docker host:
 
 ```bash
@@ -11,7 +13,7 @@ cd /opt/Minecraft
 docker compose up -d
 ```
 
-`docker compose up -d` starts Paper, Geyser, and backups in the background. Geyser and backups wait until Paper is healthy. The first start downloads Paper, ViaVersion, ViaBackwards, and Geyser.
+`docker compose up -d` starts Paper, Geyser, and backups in the background. Geyser and backups wait until Paper is healthy. The sections below are checks and optional settings. They are not extra steps to get the server running.
 
 ## Check that it stays up
 
