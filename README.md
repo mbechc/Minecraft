@@ -86,7 +86,7 @@ docker compose exec backups backup now
 
 ## Router NAT
 
-Docker on `192.168.88.5` listens on TCP `25565` for Java and UDP `19132` for Bedrock.
+Docker on Example `192.168.88.5` listens on TCP `25565` for Java and UDP `19132` for Bedrock.
 
 On the router, forward both to that host:
 
@@ -95,4 +95,4 @@ On the router, forward both to that host:
 | Java | TCP | 25565 | 192.168.88.5 port 25565 |
 | Bedrock | UDP | 19132 | 192.168.88.5 port 19132 |
 
-Reserve `192.168.88.5` for this machine in DHCP so the forwards still point at it after a reboot. Players outside connect to the router's public address on those ports.
+Reserve `192.168.88.5` (EXAMPLE) for this machine in DHCP so the forwards still point at it after a reboot. Players outside connect to the router's public address on those ports.
