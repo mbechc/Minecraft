@@ -86,7 +86,7 @@ docker compose exec backups backup now
 
 ## Router NAT
 
-Docker on Example `192.168.88.5` listens on TCP `25565` for Java and UDP `19132` for Bedrock.
+Docker on (EXAMPLE) `192.168.88.5` listens on TCP `25565` for Java and UDP `19132` for Bedrock.
 
 On the router, forward both to that host:
 
